@@ -4,10 +4,10 @@
     "subjectLine": "з дисципліни «WEB-ОРІЄНТОВАНІ ТЕХНОЛОГІЇ. BACKEND РОЗРОБКИ»"
   },
   "student": {
-    "fullName": "Прізвище Ім’я По батькові",
-    "group": "Іx-xx",
-    "gender": "male",
-    "photo": "/students/chad.jpg"
+    "fullName": "Мамчук Анна Олександрівна",
+    "group": "ІС-31",
+    "gender": "female",
+    "photo": "/students/photo.jpg"
   },
   "toc": {
     "minDepth": 2,
