@@ -10,7 +10,7 @@
 
 ### 1.3 Посилання
 - Репозиторій власного веб-застосунку (GitHub): [посилання](https://github.com/hannoveran/scoring-figure-skating-app.git)
-- Власний веб-застосунок (Жива сторінка): [посилання]()
+- Власний веб-застосунок (Жива сторінка): [посилання](https://hannoveran.github.io/scoring-figure-skating-app/)
 - Репозиторій звітного HTML-документа (GitHub): [посилання](https://github.com/hannoveran/IC-31_appRECORD-MamchukAnna-FIOT-2026.git)
 - Звітний HTML-документ (Жива сторінка): [посилання](https://hannoveran.github.io/IC-31_appRECORD-MamchukAnna-FIOT-2026/)
 
@@ -90,28 +90,9 @@ NFR5 – система повинна забезпечувати базовий
 ![Use-case](/assets/labs/lab-1/use-case_diagram.png)  
 **Рис. 1 – Use-case діаграма вебзастосунку**
 
-### 3.6 UML: Таблиця Use-case
-| UC | Назва | Актор | Передумови | Основний сценарій | Результат |
-|---|---|---|---|---|---|
-| UC0 | Authentication (Login/Logout) | User (all roles) | Є обліковий запис / сесія | Вводить дані → вхід/вихід | Сесію створено/завершено |
-| UC1 | Create Ticket | End User / Admin | Користувач авторизований | Заповнює форму → підтверджує | Заявка створена (UI / план: БД) |
-| UC2 | View Ticket List | End User / Agent / Admin | Користувач авторизований | Переглядає перелік | Список відображено |
-| UC3 | View Ticket Details | End User / Agent / Admin | Користувач авторизований; заявка існує | Відкриває деталі заявки | Дані заявки відображено |
-| UC4 | Add Comment | End User / Agent / Admin | Користувач авторизований; відкрита сторінка заявки | Вводить коментар → додає | Коментар відображено (план: БД) |
-| UC5 | Change Ticket Status | Agent / Admin | Користувач авторизований; є права | Обирає новий статус | Статус оновлено (план: історія) |
-| UC6 | Manage Categories | Admin | Користувач авторизований; роль Admin | Додає/редагує/видаляє категорії | Категорії оновлено (план) |
-| UC7 | Manage Roles / Access | Admin | Користувач авторизований; роль Admin | Налаштовує ролі/права | Права доступу оновлено (план) |
-
 ### 3.7 ER-модель даних
 ![ER](/assets/labs/lab-1/er-diagram.png)  
 **Рис. 2 – ER-діаграма (логічна модель даних).**
-
-**Пояснення сутностей:**  
-- **User** — користувач системи з роллю (User/Agent/Admin).  
-- **Ticket** — заявка з темою, описом, статусом та датами.  
-- **Category** — довідник категорій.  
-- **Comment** — коментарі всередині заявки.  
-- **StatusHistory** — історія зміни статусів.
 
 ---
 
@@ -120,62 +101,190 @@ NFR5 – система повинна забезпечувати базовий
 ### 4.1 Загальна структура сторінок
 Інтерфейс побудовано на базових структурних блоках: **Header**, **Main**, **Footer**. Навігація доступна з будь-якої сторінки, а ключові сценарії винесені на окремі маршрути.
 
-### 4.2 Фрагмент коду: адаптивне бургер-меню (Header)
-Нижче наведено фрагмент реалізації кнопки бургер-меню. На екранах `md` і більше елемент приховано (`md:hidden`), а на mobile — відображається. Додано `cursor-pointer`, `hover:*`, `transition` та aria-атрибути.
+### 4.2 Фрагмент коду: адаптивне бургер-меню, Header, Main, Footer
 
 ```tsx
-<button
-  type="button"
-  onClick={() => setOpen((v) => !v)}
-  className="md:hidden cursor-pointer inline-flex h-10 w-10 items-center justify-center rounded-xl border hover:bg-neutral-50 transition"
-  aria-label="Відкрити меню"
-  aria-expanded={open}
->
-  <span className="sr-only">Menu</span>
-  {/* Іконка з трьох ліній з анімацією (скорочено для звіту) */}
-</button>
-```
+import { useState } from 'react';
+import '../styles/BurgerMenu.css';
 
-### 4.3 Фрагмент коду: адаптивна hero-секція (Головна сторінка)
-```tsx
-<section className="rounded-2xl border bg-white p-6 shadow-sm">
-  <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
-    <div className="max-w-2xl">
-      <h1 className="mt-4 text-3xl font-semibold leading-tight md:text-4xl">
-        Підтримка без хаосу: заявки, статуси, категорії — в одному місці
-      </h1>
-      <div className="mt-6 flex flex-wrap gap-3">
-        <Link href="/tickets/new" className="rounded-xl bg-neutral-900 px-4 py-2 text-sm font-medium text-white">
-          Створити заявку
-        </Link>
-        <Link href="/tickets" className="rounded-xl border px-4 py-2 text-sm font-medium">
-          Перейти до заявок
-        </Link>
+function BurgerMenu() {
+  const [open, setOpen] = useState(false);
+
+  return (
+    <div className="burger-menu">
+      <button className="burger-button" onClick={() => setOpen(!open)}>
+        ☰
+      </button>
+
+      <div className={`menu-content ${open ? 'open' : ''}`}>
+        <div className="role">Суддя №5</div>
+        <button className="button-secondary">Вийти</button>
       </div>
     </div>
-    <div className="w-full md:w-90">
-      {/* блок з коротким переліком можливостей */}
-    </div>
-  </div>
-</section>
+  );
+}
+
+export default BurgerMenu;
 ```
 
-### 4.4 Сторінки-заглушки для навігації
-Щоб переходи з header/footer не приводили до помилок 404, додано сторінки-заглушки: `/categories`, `/profile`, `/login`, `/docs`, `/about`, `/privacy`.
+```tsx
+import { Link } from 'react-router-dom';
+import '../styles/Header.css';
+import BurgerMenu from './BurgerMenu';
+
+function Header() {
+  return (
+    <header>
+      <div className="logo-app-name">
+        <Link to="/">
+          <p>Суддівська платформа</p>
+        </Link>
+      </div>
+
+      <BurgerMenu />
+    </header>
+  );
+}
+
+export default Header;
+```
+```tsx
+<main>
+        <h1>Results</h1>
+
+        <div className="results-list">
+          {competitions.map((c) => (
+            <Link
+              key={c.id}
+              to={`/results/${c.id}`}
+              className="result-card shadow-md"
+            >
+              <h3>{c.name}</h3>
+              <p>{c.category}</p>
+              <p>{c.segment}</p>
+              <span>{c.date}</span>
+            </Link>
+          ))}
+        </div>
+      </main>
+```
 
 ```tsx
-export default function AboutPage() {
+import { Link } from 'react-router-dom';
+import '../styles/Footer.css';
+
+function Footer() {
   return (
-    <div className="mx-auto max-w-6xl px-4 py-10">
-      <h1 className="text-2xl font-semibold">Про сервіс</h1>
-      <p className="mt-2 text-neutral-600">
-        Заглушка сторінки. Контент буде розширено на наступних етапах.
-      </p>
-      <Link href="/" className="mt-6 inline-flex rounded-xl border px-3 py-2 text-sm font-medium">
-        На головну
-      </Link>
-    </div>
+    <footer>
+      <div>
+        <Link to="/">
+          <p>Суддівська платформа</p>
+        </Link>
+      </div>
+
+      <div className="footer-buttons">
+        <button className="button-secondary">About</button>
+        <button className="button-secondary">Privacy</button>
+      </div>
+    </footer>
   );
+}
+
+export default Footer;
+```
+
+### 4.3 Фрагмент коду: частина сторінки виставлення балів
+```tsx
+{/* TOTALS */}
+<div className="score-summary">
+  <div className="shadow-md box">
+    <p>TES</p>
+    <h2>{tes.toFixed(2)}</h2>
+  </div>
+
+  <div className="shadow-md box">
+    <p>PCS</p>
+    <h2>{totalPCS.toFixed(2)}</h2>
+  </div>
+
+  <div className="shadow-md box">
+    <p>Deductions</p>
+    <h2>-{deductions}</h2>
+  </div>
+
+  <div className="shadow-md box dark">
+    <p>Total</p>
+    <h2>{total.toFixed(2)}</h2>
+  </div>
+</div>
+```
+
+### 4.4 Адаптивна сітка (flexbox або grid)
+
+```tsx
+.results-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2vw;
+  margin-top: 3vh;
+}
+```
+
+### 4.5 Медіа-запити
+
+```tsx
+@media (max-width: 768px) {
+  .burger-button {
+    display: block;
+  }
+
+  .menu-content {
+    position: absolute;
+    top: 70px;
+    right: 20px;
+
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+
+    background: white;
+    padding: 15px;
+    border-radius: 10px;
+
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+
+    opacity: 0;
+    transform: translateY(-10px);
+    pointer-events: none;
+
+    transition: all 0.3s ease;
+  }
+
+  .menu-content.open {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+  }
+}
+```
+
+### 4.6 Застосування відносних одиниць вимірювання (% , em, rem, vw, vh)
+
+```tsx
+#recent-competitions-headline {
+  background-color: var(--foreground);
+  display: flex;
+  justify-content: space-between;
+  padding: 2vh 2vw;
+}
+```
+
+### 4.7 Реалізація візуальних ефектів та анімацій
+
+```tsx
+.btn-primary:hover {
+  transform: translate(3px, 3px);
+  box-shadow: none;
 }
 ```
 
@@ -183,23 +292,29 @@ export default function AboutPage() {
 
 ## 5. Скріншоти результатів
 
-<!-- ![Головна сторінка (desktop)](/assets/labs/lab-1/screen-1.png)  
-**Рис. 4 – Головна сторінка (desktop).**
+![Головна сторінка (dashboard)](/assets/labs/lab-1/screen-1.png)  
+**Рис. 3 – Головна сторінка (dashboard).**
 
 ![Головна сторінка (mobile)](/assets/labs/lab-1/screen-2.png)  
-**Рис. 5 – Головна сторінка (mobile).**
+**Рис. 4 – Головна сторінка (mobile).**
 
 ![Бургер-меню (mobile)](/assets/labs/lab-1/screen-3.png)  
-**Рис. 6 – Відкрите бургер-меню (mobile).**
+**Рис. 5 – Відкрите бургер-меню (mobile).**
 
-![Список заявок /tickets](/assets/labs/lab-1/screen-4.png)  
-**Рис. 7 – Сторінка зі списком заявок `/tickets`.**
+![Сторінка змагань (поточні та майбутні)](/assets/labs/lab-1/screen-4.png)  
+**Рис. 6 – Сторінка змагань (поточні та майбутні)**
 
-![Форма створення /tickets/new](/assets/labs/lab-1/screen-5.png)  
-**Рис. 8 – Форма створення заявки `/tickets/new`.**
+![Сторінка змагання](/assets/labs/lab-1/screen-7.png)  
+**Рис. 7 – Сторінка змагань (поточні та майбутні)**
 
-![Сторінка-заглушка](/assets/labs/lab-1/screen-6.png)  
-**Рис. 9 – Приклад сторінки-заглушки (інформаційна сторінка).** -->
+![Сторінка результатів змагань](/assets/labs/lab-1/screen-5.png)  
+**Рис. 8 – Сторінка результатів змагань**
+
+![Сторінка результату змагання](/assets/labs/lab-1/screen-6.png)  
+**Рис. 9 – Сторінка результату змагання**
+
+![Сторінка виставлення оцінок](/assets/labs/lab-1/screen-8.png)  
+**Рис. 10 – Сторінка виставлення оцінок**
 
 ---
 
